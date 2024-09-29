@@ -87,5 +87,5 @@ exports.deleteSubCategory = catchAsync(async (req, res, next) => {
     // delete subcategory image from cloudinary
     await cloudinary.uploader.destroy(subcategory.image.id);
     // send response
-    res.status(200).json({ success: true, message: 'category deleted' });
+    res.status(200).json({ success: true, message: 'subcategory deleted' });
 });

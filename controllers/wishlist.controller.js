@@ -24,9 +24,9 @@ exports.addToWishlist = catchAsync(async (req, res, next) => {
     });
     if (productIsExit) return next(new Error('Product is already in your wishlist.', { cause: 404 }));
     // add product to wishlist
-    const user = await User.findByIdAndUpdate(req.user._id, { $addToSet: { wishlist: productId } }, { new: true });
+    const user = await User.findByIdAndUpdate(req.user._id, { $addToSet: { wishlist: productId } }, { new: true }).populate('wishlist');
     // send response
-    res.status(200).json({ success: true, data: user.wishlist });
+    res.status(200).json({ success: true, message: 'Product Add to Wishlist', userWishlist: user.wishlist });
 });
 
 // remove from wishlist
@@ -37,7 +37,7 @@ exports.removeFromWishlist = catchAsync(async (req, res, next) => {
     const product = await Product.findById(productId);
     if (!product) return next(new Error('product not found!', { cause: 404 }));
     // remove product to wishlist
-    const user = await User.findByIdAndUpdate(req.user._id, { $pull: { wishlist: productId } }, { new: true });
+    const user = await User.findByIdAndUpdate(req.user._id, { $pull: { wishlist: productId } }, { new: true }).populate('wishlist');
     // send response
-    res.status(200).json({ success: true, data: user.wishlist });
+    res.status(200).json({ success: true, message: 'Product Remove form Wishlist', userWishlist: user.wishlist });
 });

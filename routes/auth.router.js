@@ -10,7 +10,7 @@ const router = express.Router();
 router.post('/signup', validation(authvalidation.signup), authController.signup);
 
 // Activate Account
-router.get('/activateaccount/:token', validation(authvalidation.activateAccount), authController.activateAccount);
+router.get('/activateAccount/:token', validation(authvalidation.activateAccount), authController.activateAccount);
 
 //Login
 router.post('/login', validation(authvalidation.login), authController.login);
