@@ -5,6 +5,9 @@ const { allowedTo } = require('./../middleware/allowedTo.middleware');
 
 const router = express.Router();
 
+// Middlewares
+router.use(isAuthenticate);
+
 // get profile
 router.route('/me').get(userController.getCurrentUser, userController.getUser);
 
@@ -15,7 +18,7 @@ router.patch('/', userController.updateProfile);
 router.put('/', userController.updateProfile);
 
 // Middlewares
-router.use(isAuthenticate, allowedTo('admin'));
+router.use(allowedTo('admin'));
 
 // for admin -> get users / create user / update user / delete user
 router.route('/').get(userController.getAllUsers).post(userController.createUser);
