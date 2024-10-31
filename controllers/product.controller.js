@@ -16,27 +16,21 @@ const checkId = async (model, id, modelName, next) => {
 
 // get all products
 exports.allProducts = catchAsync(async (req, res, next) => {
-    // Request query
     const { sort, keyword, category, subcategory, brand, page, select } = req.query;
     // check for category and subcategory and brand existence
     checkId(Category, category, 'Category', next);
     checkId(SubCategory, subcategory, 'Subcategory', next);
     checkId(Brand, brand, 'Brand', next);
-    // Search products with applied filters
     const products = await Product.find().select(select).sort(sort).paginate(page).search(keyword);
-    // Check if products are found
     if (!products.length) return next(new Error('canot find products !', { cause: 404 }));
-    // send response
     res.status(200).json({ success: true, results: products.length, products });
 });
 
 // create product
 exports.createProduct = catchAsync(async (req, res, next) => {
-    // check for category and subcategory and brand existence
     await checkId(Category, req.body.category, 'Category', next);
     await checkId(SubCategory, req.body.subcategory, 'Subcategory', next);
     await checkId(Brand, req.body.brand, 'Brand', next);
-    // Validate request body file
     if (!req.files) return next(new Error('product images are required!', { casue: 400 }));
     // create folderName for cloud
     const { nanoid } = await import('nanoid');
@@ -54,7 +48,6 @@ exports.createProduct = catchAsync(async (req, res, next) => {
             return { id: public_id, url: secure_url };
         })
     );
-    // create product
     const newProduct = await Product.create({
         ...req.body,
         cloudFolder,
@@ -63,24 +56,19 @@ exports.createProduct = catchAsync(async (req, res, next) => {
         images: req.files.images,
         createdBy: req.user._id,
     });
-    // send response
     res.status(201).json({ success: true, newProduct });
 });
 
 // update product
 exports.updateProduct = catchAsync(async (req, res, next) => {
-    // update slug if name given
     if (req.body.name) req.body.slug = slugify(req.body.name);
-    // find product and update
     const updatedProduct = await Product.findOneAndUpdate({ _id: req.params.id, createdBy: req.user._id }, { ...req.body }, { new: true, runValidators: true });
     if (!updatedProduct) return next(new Error('Product not found or you do not have permission to perform this operation!', { cause: 404 }));
-    // send response
     res.status(200).json({ success: true, updatedProduct });
 });
 
 // delete product
 exports.deleteProduct = catchAsync(async (req, res, next) => {
-    // find product and delete
     const product = await Product.findOneAndDelete({ _id: req.params.id, createdBy: req.user._id });
     if (!product) return next(new Error('Product not found or you do not have permission to perform this operation!', { cause: 404 }));
     // delete all product images from Cloudinary
@@ -89,6 +77,5 @@ exports.deleteProduct = catchAsync(async (req, res, next) => {
     await cloudinary.api.delete_resources(imageIds);
     // delete product folder from cloudinary
     await cloudinary.api.delete_folder(`neomart/products/${product.cloudFolder}`);
-    // send response
     res.status(200).json({ success: true, message: 'product deleted' });
 });

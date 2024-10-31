@@ -11,12 +11,10 @@ const isAuthenticated = catchAsync(async (req, res, next) => {
         return next(new Error('You are not logged in! Please log in to get access.', { cause: 401 }));
     }
     const decode = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    // check token in datebase
     const currentToken = await Token.findOne({ token, isValid: true });
     if (!currentToken) {
         return next(new Error('token not found', { cause: 401 }));
     }
-    // check user
     const currentUser = await User.findById(decode.id);
     if (!currentUser) {
         return next(new Error('The user belonging to this token not found', { cause: 401 }));

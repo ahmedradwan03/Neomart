@@ -11,7 +11,7 @@ const cartSchema = new mongoose.Schema(
         cartPrice: { type: Number, default: 0 },
         priceAfterDiscount: Number,
         user: { type: mongoose.Types.ObjectId, ref: 'User', required: true, unique: true },
-        coupon: { type: mongoose.Types.ObjectId, ref: 'Coupon' },
+        coupon: { type: mongoose.Types.ObjectId, ref: 'Coupon', default: null }, 
     },
     { timestamps: true }
 );
