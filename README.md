@@ -224,4 +224,4 @@ SITE_DOMAIN=http://localhost:3000
 
 ## License
 
-© 2024 [Ahmed Radwan]. Licensed under the MIT License.
+© 2024 Ahmed Radwan. Licensed under the MIT License.
